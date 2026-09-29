@@ -21,11 +21,11 @@ function loadExternalResource(url, type) {
 (async () => {
   console.log('[L2D] start width='+screen.width); if (screen.width < 768) { console.log('[L2D] mobile skip'); return; };
   console.log('[L2D] loading resources'); await Promise.all([
-    loadExternalResource(live2d_path + 'waifu.css?v=17', 'css'),
-    loadExternalResource(live2d_path + 'waifu-tips.js?v=17', 'js')
+    loadExternalResource(live2d_path + 'waifu.css?v=18', 'css'),
+    loadExternalResource(live2d_path + 'waifu-tips.js?v=18', 'js')
   ]);
   console.log('[L2D] call initWidget'); initWidget({
-    waifuPath: live2d_path + 'waifu-tips.json?v=17',
+    waifuPath: live2d_path + 'waifu-tips.json?v=18',
     cdnPath: live2d_path,
     cubism2Path: live2d_path + 'live2d.min.js',
     cubism5Path: 'https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js',

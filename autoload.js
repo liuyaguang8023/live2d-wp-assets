@@ -66,4 +66,21 @@ function loadExternalResource(url, type) {
       }, 300); }
     },t*1000);
   });
+  setTimeout(function(){
+    var i='DIAG2 ';
+    try{i+='Live2D='+(typeof window.Live2D);}catch(e){i+='L2Derr';}
+    try{i+='|MWebGL='+(typeof window.Live2DModelWebGL);}catch(e){}
+    var cs=document.querySelectorAll('canvas');i+='|canvasN='+cs.length;
+    var c=document.getElementById('live2d');
+    if(c){
+      i+='|cSize='+c.width+'x'+c.height;
+      var r=c.getBoundingClientRect();i+='|rect='+Math.round(r.width)+'x'+Math.round(r.height);
+      var gl=null;try{gl=c.getContext('webgl');}catch(e){i+='|glerr='+e.message;}
+      i+='|gl='+(gl?'OK':'NULL');
+      if(gl){try{i+='|rend='+String(gl.getParameter(gl.RENDERER)).substring(0,35);}catch(e){}}
+    } else i+='|NO_CANVAS';
+    var wc=document.getElementById('waifu-canvas');i+='|waifuCanvas='+(wc?'yes':'no');
+    if(wc){var wr=wc.getBoundingClientRect();i+='|wcRect='+Math.round(wr.width)+'x'+Math.round(wr.height);}
+    l2dlog(i);
+  },4500);
 })();

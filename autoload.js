@@ -44,7 +44,16 @@ function loadExternalResource(url, type) {
       if(c){try{img=(c.toDataURL?c.toDataURL().substring(0,1800):''); info+=' dataURL='+img.length;}catch(e){info+=' toDataURLerr='+e.message;}}
       info+=' waifu='+(document.getElementById('waifu')?'waifu-active':'no-waifu');
       l2dlog(info);
-      if(img){ setTimeout(function(){ l2dlog('IMG_'+t+' '+img); }, 300); }
+      if(img){ setTimeout(function(){
+        try {
+          var b64 = img.indexOf(',') > 0 ? img.substring(img.indexOf(',')+1) : img;
+          var xhr = new XMLHttpRequest();
+          xhr.open('POST', '/l2dsave.php', true);
+          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+          xhr.send('img=' + encodeURIComponent(b64));
+          l2dlog('POSTED_'+t+' len='+b64.length);
+        } catch(e) { l2dlog('POSTERR '+e.message); }
+      }, 300); }
     },t*1000);
   });
 })();

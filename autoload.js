@@ -1,12 +1,25 @@
+/*!
+ * Live2D Widget
+ * https://github.com/stevenjoezhang/live2d-widget
+ */
+
+// Recommended to use absolute path for live2d_path parameter
+// live2d_path 参数建议使用绝对路径
 const live2d_path = '/wp-content/uploads/live2d/';
+// const live2d_path = '/dist/';
+
+// Method to encapsulate asynchronous resource loading
+// 封装异步加载资源的方法
 function loadExternalResource(url, type) {
   return new Promise((resolve, reject) => {
     let tag;
+
     if (type === 'css') {
       tag = document.createElement('link');
       tag.rel = 'stylesheet';
       tag.href = url;
-    } else if (type === 'js') {
+    }
+    else if (type === 'js') {
       tag = document.createElement('script');
       tag.type = 'module';
       tag.src = url;
@@ -18,81 +31,59 @@ function loadExternalResource(url, type) {
     }
   });
 }
+
 (async () => {
-  console.log('[L2D] start width='+screen.width); if (screen.width < 768) { console.log('[L2D] mobile skip'); return; };
-  console.log('[L2D] loading resources'); await Promise.all([
-    loadExternalResource(live2d_path + 'waifu.css?v=21', 'css'),
-    loadExternalResource(live2d_path + 'waifu-tips.js?v=21', 'js')
+  // If you are concerned about display issues on mobile devices, you can use screen.width to determine whether to load
+  // 如果担心手机上显示效果不佳，可以根据屏幕宽度来判断是否加载
+  // if (screen.width < 768) return;
+
+  // Avoid cross-origin issues with image resources
+  // 避免图片资源跨域问题
+  const OriginalImage = window.Image;
+  window.Image = function(...args) {
+    const img = new OriginalImage(...args);
+    img.crossOrigin = "anonymous";
+    return img;
+  };
+  window.Image.prototype = OriginalImage.prototype;
+  // Load waifu.css and waifu-tips.js
+  // 加载 waifu.css 和 waifu-tips.js
+  await Promise.all([
+    loadExternalResource(live2d_path + 'waifu.css?v=22', 'css'),
+    loadExternalResource(live2d_path + 'waifu-tips.js?v=22', 'js')
   ]);
-  console.log('[L2D] call initWidget'); initWidget({
-    waifuPath: live2d_path + 'waifu-tips.json?v=21',
-    cdnPath: live2d_path,
-    cubism2Path: live2d_path + 'live2d.min.js',
+  // For detailed usage of configuration options, see README.en.md
+  // 配置选项的具体用法见 README.md
+  initWidget({
+    waifuPath: live2d_path + 'waifu-tips.json?v=22',
+    cdnPath: '/wp-content/uploads/live2d/',
+    // cdnPath: 'https://fastly.jsdelivr.net/gh/fghrsh/live2d_api/',
+    cubism2Path: live2d_path + 'live2d.min.js?v=22',
     cubism5Path: 'https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js',
     tools: ['hitokoto', 'asteroids', 'switch-model', 'switch-texture', 'photo', 'info', 'quit'],
     logLevel: 'warn',
-    drag: false
+    drag: false,
   });
-
-  var l2dlog=function(x){try{var i=new Image();i.src='/l2dcheck.php?m='+encodeURIComponent(x).substring(0,1900);}catch(e){}};
-  setTimeout(function(){
-    var rs=performance.getEntriesByType('resource')||[],n=0;
-    for(var i=0;i<rs.length;i++){
-      var u=rs[i].name;
-      if(u.indexOf('shizuku-48')>=0){
-        n++;
-        if(n<=40)l2dlog('RES '+rs[i].responseStatus+'|'+rs[i].transferSize+'|'+u.replace(/^https?:\/\/[^\/]+\//,'/'));
-      }
-    }
-    l2dlog('RES_TOTAL '+n);
-  },5500);
-  fetch('/wp-content/uploads/live2d/model/ShizukuTalk/shizuku-48/textures.512/00.png').then(function(r){l2dlog('FETCH_TEX '+r.status);}).catch(function(e){l2dlog('FETCH_TEX_ERR '+String(e));});
-  window.addEventListener('error',function(e){l2dlog('WINERR '+e.message+' @ '+e.filename+':'+e.lineno);});
-  window.addEventListener('unhandledrejection',function(e){var r=e.reason;l2dlog('REJECT '+String(r&&r.message?r.message:r).substring(0,300));});
-  var _ce=console.error;console.error=function(){try{l2dlog('CERR '+Array.prototype.slice.call(arguments).join(' ').substring(0,300));}catch(e){};_ce.apply(console,arguments);};
-  var _cw=console.warn;console.warn=function(){try{l2dlog('CWARN '+Array.prototype.slice.call(arguments).join(' ').substring(0,300));}catch(e){};_cw.apply(console,arguments);};
-
-  [3,6,10,15].forEach(function(t){
-    setTimeout(function(){
-      var c=document.getElementById('live2d');
-      var info='t='+t+'s canvas='+(c?c.width+'x'+c.height:'null');
-      var img='';
-      if(c){try{img=(c.toDataURL?c.toDataURL():''); info+=' dataURL='+img.length;}catch(e){info+=' toDataURLerr='+e.message;}}
-      info+=' waifu='+(document.getElementById('waifu')?'waifu-active':'no-waifu');
-      l2dlog(info);
-      if(img){ setTimeout(function(){
-        try {
-          var b64 = img.indexOf(',') > 0 ? img.substring(img.indexOf(',')+1) : img;
-          var xhr = new XMLHttpRequest();
-          xhr.open('POST', '/l2dsave.php', true);
-          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-          xhr.send('img=' + encodeURIComponent(b64));
-          l2dlog('POSTED_'+t+' len='+b64.length);
-          if(t===10){
-            var im=new Image();
-            im.src=img;
-            im.style.cssText='position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:99999;width:500px;height:500px;border:4px solid #fff;background:#444;display:block;';
-            document.body.appendChild(im);
-          }
-        } catch(e) { l2dlog('POSTERR '+e.message); }
-      }, 300); }
-    },t*1000);
-  });
-  setTimeout(function(){
-    var i='DIAG2 ';
-    try{i+='Live2D='+(typeof window.Live2D);}catch(e){i+='L2Derr';}
-    try{i+='|MWebGL='+(typeof window.Live2DModelWebGL);}catch(e){}
-    var cs=document.querySelectorAll('canvas');i+='|canvasN='+cs.length;
-    var c=document.getElementById('live2d');
-    if(c){
-      i+='|cSize='+c.width+'x'+c.height;
-      var r=c.getBoundingClientRect();i+='|rect='+Math.round(r.width)+'x'+Math.round(r.height);
-      var gl=null;try{gl=c.getContext('webgl');}catch(e){i+='|glerr='+e.message;}
-      i+='|gl='+(gl?'OK':'NULL');
-      if(gl){try{i+='|rend='+String(gl.getParameter(gl.RENDERER)).substring(0,35);}catch(e){}}
-    } else i+='|NO_CANVAS';
-    var wc=document.getElementById('waifu-canvas');i+='|waifuCanvas='+(wc?'yes':'no');
-    if(wc){var wr=wc.getBoundingClientRect();i+='|wcRect='+Math.round(wr.width)+'x'+Math.round(wr.height);}
-    l2dlog(i);
-  },4500);
 })();
+
+console.log(`\n%cLive2D%cWidget%c\n`, 'padding: 8px; background: #cd3e45; font-weight: bold; font-size: large; color: white;', 'padding: 8px; background: #ff5450; font-size: large; color: #eee;', '');
+
+/*
+く__,.ヘヽ.        /  ,ー､ 〉
+         ＼ ', !-─‐-i  /  /´
+         ／｀ｰ'       L/／｀ヽ､
+       /   ／,   /|   ,   ,       ',
+     ｲ   / /-‐/  ｉ  L_ ﾊ ヽ!   i
+      ﾚ ﾍ 7ｲ｀ﾄ   ﾚ'ｧ-ﾄ､!ハ|   |
+        !,/7 '0'     ´0iソ|    |
+        |.从"    _     ,,,, / |./    |
+        ﾚ'| i＞.､,,__  _,.イ /   .i   |
+          ﾚ'| | / k_７_/ﾚ'ヽ,  ﾊ.  |
+            | |/i 〈|/   i  ,.ﾍ |  i  |
+           .|/ /  ｉ：    ﾍ!    ＼  |
+            kヽ>､ﾊ    _,.ﾍ､    /､!
+            !'〈//｀Ｔ´', ＼ ｀'7'ｰr'
+            ﾚ'ヽL__|___i,___,ンﾚ|ノ
+                ﾄ-,/  |___./
+                'ｰ'    !_,.:
+*/

@@ -21,11 +21,11 @@ function loadExternalResource(url, type) {
 (async () => {
   console.log('[L2D] start width='+screen.width); if (screen.width < 768) { console.log('[L2D] mobile skip'); return; };
   console.log('[L2D] loading resources'); await Promise.all([
-    loadExternalResource(live2d_path + 'waifu.css?v=11', 'css'),
-    loadExternalResource(live2d_path + 'waifu-tips.js?v=11', 'js')
+    loadExternalResource(live2d_path + 'waifu.css?v=17', 'css'),
+    loadExternalResource(live2d_path + 'waifu-tips.js?v=17', 'js')
   ]);
   console.log('[L2D] call initWidget'); initWidget({
-    waifuPath: live2d_path + 'waifu-tips.json?v=11',
+    waifuPath: live2d_path + 'waifu-tips.json?v=17',
     cdnPath: live2d_path,
     cubism2Path: live2d_path + 'live2d.min.js',
     cubism5Path: 'https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js',
@@ -35,16 +35,6 @@ function loadExternalResource(url, type) {
   });
 
   var l2dlog=function(x){try{var i=new Image();i.src='/l2dcheck.php?m='+encodeURIComponent(x).substring(0,1900);}catch(e){}};
-  var _Im=window.Image;
-  window.Image=function(){
-    var im=new _Im();
-    try{
-      var _e=null,_l=null;
-      Object.defineProperty(im,'onerror',{configurable:true,get:function(){return _e;},set:function(f){_e=function(){try{var u=String(im.src);if(u.indexOf('shizuku-48')>=0)l2dlog('TEXERR '+u);}catch(x){};return f?f.apply(im,arguments):undefined;};}});
-      Object.defineProperty(im,'onload',{configurable:true,get:function(){return _l;},set:function(f){_l=function(){try{var u=String(im.src);if(u.indexOf('shizuku-48')>=0)l2dlog('TEXOK '+u);}catch(x){};return f?f.apply(im,arguments):undefined;};}});
-    }catch(x){}
-    return im;
-  };
   setTimeout(function(){
     var rs=performance.getEntriesByType('resource')||[],n=0;
     for(var i=0;i<rs.length;i++){

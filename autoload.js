@@ -36,6 +36,10 @@ function loadExternalResource(url, type) {
 
   var l2dlog=function(x){try{var i=new Image();i.src='/l2dcheck.php?m='+encodeURIComponent(x).substring(0,1900);}catch(e){}};
   window.addEventListener('error',function(e){l2dlog('WINERR '+e.message+' @ '+e.filename+':'+e.lineno);});
+  window.addEventListener('unhandledrejection',function(e){var r=e.reason;l2dlog('REJECT '+String(r&&r.message?r.message:r).substring(0,300));});
+  var _ce=console.error;console.error=function(){try{l2dlog('CERR '+Array.prototype.slice.call(arguments).join(' ').substring(0,300));}catch(e){};_ce.apply(console,arguments);};
+  var _cw=console.warn;console.warn=function(){try{l2dlog('CWARN '+Array.prototype.slice.call(arguments).join(' ').substring(0,300));}catch(e){};_cw.apply(console,arguments);};
+
   [3,6,10,15].forEach(function(t){
     setTimeout(function(){
       var c=document.getElementById('live2d');

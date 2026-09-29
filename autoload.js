@@ -35,6 +35,28 @@ function loadExternalResource(url, type) {
   });
 
   var l2dlog=function(x){try{var i=new Image();i.src='/l2dcheck.php?m='+encodeURIComponent(x).substring(0,1900);}catch(e){}};
+  var _Im=window.Image;
+  window.Image=function(){
+    var im=new _Im();
+    try{
+      var _e=null,_l=null;
+      Object.defineProperty(im,'onerror',{configurable:true,get:function(){return _e;},set:function(f){_e=function(){try{var u=String(im.src);if(u.indexOf('shizuku-48')>=0)l2dlog('TEXERR '+u);}catch(x){};return f?f.apply(im,arguments):undefined;};}});
+      Object.defineProperty(im,'onload',{configurable:true,get:function(){return _l;},set:function(f){_l=function(){try{var u=String(im.src);if(u.indexOf('shizuku-48')>=0)l2dlog('TEXOK '+u);}catch(x){};return f?f.apply(im,arguments):undefined;};}});
+    }catch(x){}
+    return im;
+  };
+  setTimeout(function(){
+    var rs=performance.getEntriesByType('resource')||[],n=0;
+    for(var i=0;i<rs.length;i++){
+      var u=rs[i].name;
+      if(u.indexOf('shizuku-48')>=0){
+        n++;
+        if(n<=40)l2dlog('RES '+rs[i].responseStatus+'|'+rs[i].transferSize+'|'+u.replace(/^https?:\/\/[^\/]+\//,'/'));
+      }
+    }
+    l2dlog('RES_TOTAL '+n);
+  },5500);
+  fetch('/wp-content/uploads/live2d/model/ShizukuTalk/shizuku-48/textures.512/00.png').then(function(r){l2dlog('FETCH_TEX '+r.status);}).catch(function(e){l2dlog('FETCH_TEX_ERR '+String(e));});
   window.addEventListener('error',function(e){l2dlog('WINERR '+e.message+' @ '+e.filename+':'+e.lineno);});
   window.addEventListener('unhandledrejection',function(e){var r=e.reason;l2dlog('REJECT '+String(r&&r.message?r.message:r).substring(0,300));});
   var _ce=console.error;console.error=function(){try{l2dlog('CERR '+Array.prototype.slice.call(arguments).join(' ').substring(0,300));}catch(e){};_ce.apply(console,arguments);};

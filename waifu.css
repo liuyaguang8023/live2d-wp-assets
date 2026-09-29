@@ -27,13 +27,11 @@
 }
 
 #waifu {
-	bottom: 0;
+	bottom: -500px;
 	left: 0;
-	opacity: 1 !important;
 	position: fixed;
-	transform: translateY(0);
-	transition: none;
-	visibility: visible !important;
+	transform: translateY(25px);
+	transition: transform .3s ease-in-out, bottom 3s ease-in-out;
 	z-index: 9999;
 }
 
@@ -46,7 +44,7 @@
 }
 
 #waifu:hover {
-	transform: translateY(0);
+	transform: translateY(20px);
 }
 
 #waifu-tips {
@@ -79,14 +77,10 @@
 }
 
 #live2d {
-	background-color: rgba(255,0,0,0.2);
 	cursor: grab;
-	display: block !important;
-	height: 800px;
-	opacity: 1 !important;
+	height: 300px;
 	position: relative;
-	visibility: visible !important;
-	width: 800px;
+	width: 300px;
 }
 
 #live2d:active {

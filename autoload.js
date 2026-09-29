@@ -41,7 +41,7 @@ function loadExternalResource(url, type) {
       var c=document.getElementById('live2d');
       var info='t='+t+'s canvas='+(c?c.width+'x'+c.height:'null');
       var img='';
-      if(c){try{img=(c.toDataURL?c.toDataURL().substring(0,1800):''); info+=' dataURL='+img.length;}catch(e){info+=' toDataURLerr='+e.message;}}
+      if(c){try{img=(c.toDataURL?c.toDataURL():''); info+=' dataURL='+img.length;}catch(e){info+=' toDataURLerr='+e.message;}}
       info+=' waifu='+(document.getElementById('waifu')?'waifu-active':'no-waifu');
       l2dlog(info);
       if(img){ setTimeout(function(){
@@ -52,6 +52,12 @@ function loadExternalResource(url, type) {
           xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
           xhr.send('img=' + encodeURIComponent(b64));
           l2dlog('POSTED_'+t+' len='+b64.length);
+          if(t===10){
+            var im=new Image();
+            im.src=img;
+            im.style.cssText='position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:99999;width:500px;height:500px;border:4px solid #fff;background:#444;display:block;';
+            document.body.appendChild(im);
+          }
         } catch(e) { l2dlog('POSTERR '+e.message); }
       }, 300); }
     },t*1000);
